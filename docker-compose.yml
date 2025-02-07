@@ -16,32 +16,23 @@ services:
       mongodb:
         condition: service_healthy
     command: >
-      sh -c "php artisan migrate && php artisan db:seed && php artisan jwt:secret && php-fpm"
+      sh -c "php artisan key:generate && php artisan migrate && php artisan db:seed && php artisan jwt:secret && php-fpm"
 
   mongodb:
-    image: mongo:5.0
-    restart: always
+    image: mongo
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: rocket9
-      MONGO_INITDB_ROOT_PASSWORD: rocket9
-      MONGO_INITDB_DATABASE: ticketing
+      - MONGO_INITDB_ROOT_USERNAME=rocket9
+      - MONGO_INITDB_ROOT_PASSWORD=rocket9
+      - MONGO_INITDB_DATABASE=ticketing
     volumes:
       - mongodb_data:/data/db
-
-    healthcheck: 
-      test: echo 'db.runCommand({find:"app_db_name.devUser"}).ok' | mongosh --authenticationDatabase admin --host localhost -u rocket9 -p rocket9 admin --quiet | grep -q 1
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]
       interval: 10s
-      timeout: 60s
-      retries: 3
-      start_period: 20s
-
-    # healthcheck:
-    #   test: ["CMD", "mongo", "--eval", "db.runCommand({ ping: 1 })"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+      timeout: 5s
+      retries: 5
 
   frontend:
     build:
