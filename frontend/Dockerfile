@@ -1,5 +1,6 @@
 # Use the official Node.js image
-FROM node:16
+FROM node:20
+
 
 # Set the working directory
 WORKDIR /app
@@ -8,7 +9,7 @@ WORKDIR /app
 COPY . .
 
 # Install npm dependencies
-RUN npm install
+RUN npm install --force
 
 # Expose the port
 EXPOSE 3000

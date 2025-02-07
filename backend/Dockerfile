@@ -19,7 +19,7 @@ RUN pecl install mongodb \
     && docker-php-ext-enable mongodb
 
 # Set the working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 # Copy the application files
 COPY . .
